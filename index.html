@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeRoute — Community Safety Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-row">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C9 2 7 4.4 7 7.3c0 2.4 1.6 4.1 3.1 5.6.6.6 1.9 1.9 1.9 3.6v3.5" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M12 2C15 2 17 4.4 17 7.3c0 2.4-1.6 4.1-3.1 5.6-.6.6-1.9 1.9-1.9 3.6" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="12" cy="7.3" r="2.1" fill="var(--amber)"/>
+        <path d="M9 21h6" stroke="var(--fg)" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-name">SafeRoute</span>
+    </div>
+    <nav class="site-nav">
+      <a href="#map">The Map</a>
+      <a href="#report">Report a Spot</a>
+      <a href="#about">Why it matters</a>
+    </nav>
+    <button class="btn btn-ghost" id="themeToggle" style="padding:9px 14px;">Toggle theme</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div>
+      <h1>Know the route<br>before you take it.</h1>
+      <p class="lede">SafeRoute is a crowdsourced map of streets, corners and paths — marked safe, caution or unsafe by the people who actually walk them. Built for the routes official maps never rate.</p>
+      <div class="hero-cta">
+        <a href="#map" class="btn btn-primary">Explore the map</a>
+        <a href="#report" class="btn btn-ghost">Report a spot</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 300 260" preserveAspectRatio="xMidYMid slice">
+        <rect width="300" height="260" fill="none"/>
+        <g stroke="var(--line-strong)" stroke-width="1">
+          <line x1="0" y1="60" x2="300" y2="60"/>
+          <line x1="0" y1="130" x2="300" y2="130"/>
+          <line x1="0" y1="195" x2="300" y2="195"/>
+          <line x1="75" y1="0" x2="75" y2="260"/>
+          <line x1="160" y1="0" x2="160" y2="260"/>
+          <line x1="230" y1="0" x2="230" y2="260"/>
+        </g>
+        <circle class="hero-pin" cx="75" cy="60" r="6" fill="var(--green)"/>
+        <circle class="hero-pin" cx="160" cy="130" r="7" fill="var(--amber)"/>
+        <circle class="hero-pin" cx="230" cy="60" r="6" fill="var(--green)"/>
+        <circle class="hero-pin" cx="110" cy="195" r="7" fill="var(--coral)"/>
+        <circle class="hero-pin" cx="230" cy="195" r="6" fill="var(--amber)"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="num">1 in 3</div>
+      <div class="cap">women worldwide experience physical or sexual violence in their lifetime — WHO global estimate.</div>
+    </div>
+    <div class="stat">
+      <div class="num">0</div>
+      <div class="cap">mainstream map apps that let a community flag a street as unsafe.</div>
+    </div>
+    <div class="stat">
+      <div class="num">Day ⇄ Night</div>
+      <div class="cap">a spot's safety can flip completely once the sun goes down. SafeRoute tracks both.</div>
+    </div>
+  </div>
+
+  <section id="map" class="tight">
+    <div class="section-head">
+      <h2>The community map</h2>
+      <p>Click anywhere on the map to drop a pin and file a report. Every marker here comes from someone who has actually walked that street.</p>
+    </div>
+
+    <div class="app">
+      <div class="panel map-panel">
+        <div class="map-toolbar">
+          <span class="map-hint" id="mapHint">Showing <strong id="visibleCount">0</strong> reported spots</span>
+          <div class="time-toggle" id="timeToggle">
+            <button class="active" data-time="all">All</button>
+            <button data-time="day">By day</button>
+            <button data-time="night">By night</button>
+          </div>
+        </div>
+
+        <div class="map-svg-wrap" id="mapWrap">
+          <svg id="cityMap" viewBox="0 0 100 82" preserveAspectRatio="none"></svg>
+        </div>
+
+        <div class="legend">
+          <span><span class="dot" style="background:var(--green)"></span> Safe</span>
+          <span><span class="dot" style="background:var(--amber)"></span> Caution</span>
+          <span><span class="dot" style="background:var(--coral)"></span> Unsafe</span>
+        </div>
+
+        <div class="filters" id="levelFilters">
+          <button class="chip active" data-level="all">All spots</button>
+          <button class="chip" data-level="safe">Safe</button>
+          <button class="chip" data-level="caution">Caution</button>
+          <button class="chip" data-level="unsafe">Unsafe</button>
+        </div>
+      </div>
+
+      <div class="panel form-panel" id="report">
+        <h3>Report a spot</h3>
+        <p class="sub">Click a point on the map first, then describe what makes it feel safe or unsafe.</p>
+
+        <div class="pin-status" id="pinStatus">No location selected yet — tap the map.</div>
+
+        <form id="reportForm">
+          <div class="field">
+            <label for="areaName">Street or area name</label>
+            <input type="text" id="areaName" placeholder="e.g. Liberty Market underpass" required>
+          </div>
+          <div class="field">
+            <label for="cityName">City, country</label>
+            <input type="text" id="cityName" placeholder="e.g. Lahore, Pakistan" required>
+          </div>
+          <div class="field">
+            <label>How does it feel?</label>
+            <div class="level-picker" id="levelPicker">
+              <button type="button" class="level-btn" data-level="safe"><span class="dot" style="background:var(--green)"></span>Safe</button>
+              <button type="button" class="level-btn" data-level="caution"><span class="dot" style="background:var(--amber)"></span>Caution</button>
+              <button type="button" class="level-btn" data-level="unsafe"><span class="dot" style="background:var(--coral)"></span>Unsafe</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>When does this apply?</label>
+            <select id="timeSelect">
+              <option value="both">Day and night</option>
+              <option value="day">Daytime only</option>
+              <option value="night">Nighttime only</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>What stands out here? (pick any)</label>
+            <div class="reason-grid" id="reasonGrid">
+              <button type="button" class="reason-chip" data-reason="Well lit">Well lit</button>
+              <button type="button" class="reason-chip" data-reason="No lighting">No lighting</button>
+              <button type="button" class="reason-chip" data-reason="Busy / crowded">Busy / crowded</button>
+              <button type="button" class="reason-chip" data-reason="Isolated">Isolated</button>
+              <button type="button" class="reason-chip" data-reason="Harassment reported">Harassment reported</button>
+              <button type="button" class="reason-chip" data-reason="No footpath">No footpath</button>
+              <button type="button" class="reason-chip" data-reason="Good CCTV">Good CCTV</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="note">Anything else people should know?</label>
+            <textarea id="note" placeholder="Optional details..."></textarea>
+          </div>
+          <div class="submit-row">
+            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Add to map</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="list-head">
+      <h3 style="font-size:1.2rem; font-family:'Fraunces',serif;">All reports</h3>
+      <input type="text" class="search" id="searchInput" placeholder="Search by city or area...">
+    </div>
+    <div class="report-list" id="reportList"></div>
+  </section>
+
+  <section id="about">
+    <div class="section-head">
+      <h2>Why this exists</h2>
+      <p>Standard maps route you by distance and traffic. None of them route you by safety.</p>
+    </div>
+    <div class="sdg-grid">
+      <div class="sdg-card">
+        <div class="tag">SDG 5 — Gender Equality</div>
+        <p>Fear of unsafe streets narrows where women and girls can study, work or simply exist after dark. Naming unsafe spots — and confirming safe ones — turns lived experience into shareable, actionable data.</p>
+      </div>
+      <div class="sdg-card">
+        <div class="tag">SDG 11 — Sustainable Cities</div>
+        <p>City planners rarely have street-level safety data at all, let alone from the people most affected. A live, crowdsourced layer like this can point directly at where lighting, footpaths or patrols are missing.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+    <span>SafeRoute — a demo built for the Acodemic × G.I.R.L.S. Global SDG Hackathon.</span>
+    <span>Demo data is illustrative. Reports you add are stored only in your own browser.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Pin added to the map</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
